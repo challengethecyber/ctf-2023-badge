@@ -1,0 +1,38 @@
+first, get the unix port (ports/unix; make submodules; make)
+then use gdb
+
+break at vm.c using gdb:
+break ../../py/vm.c:308
+
+disas/m $rip, +100
+
+then on the break, jump to MP_BC_LOAD_CONST_TRUE instead using set $rip = ...
+https://github.com/adafruit/circuitpython/blob/main/py/vm.c#L308
+
+
+307	                ENTRY(MP_BC_LOAD_CONST_FALSE):
+308	                    PUSH(mp_const_false);
+=> 0x0000562e99e7d9fb <mp_execute_bytecode+971>:	mov    QWORD PTR [r14+0x8],0xe
+   0x0000562e99e7da03 <mp_execute_bytecode+979>:	add    r14,0x8
+
+309	                    DISPATCH();
+   0x0000562e99e7da07 <mp_execute_bytecode+983>:	mov    QWORD PTR [rbx+0x8],r13
+   0x0000562e99e7da0b <mp_execute_bytecode+987>:	movzx  eax,BYTE PTR [r13+0x0]
+   0x0000562e99e7da10 <mp_execute_bytecode+992>:	add    r13,0x1
+   0x0000562e99e7da14 <mp_execute_bytecode+996>:	mov    rax,QWORD PTR [r12+rax*8]
+   0x0000562e99e7da18 <mp_execute_bytecode+1000>:	jmp    rax
+   0x0000562e99e7da1a <mp_execute_bytecode+1002>:	endbr64 
+
+310	
+311	                ENTRY(MP_BC_LOAD_CONST_NONE):
+312	                    PUSH(mp_const_none);
+   0x0000562e99e7da1e <mp_execute_bytecode+1006>:	mov    QWORD PTR [r14+0x8],0x6
+   0x0000562e99e7da26 <mp_execute_bytecode+1014>:	add    r14,0x8
+
+313	                    DISPATCH();
+   0x0000562e99e7da2a <mp_execute_bytecode+1018>:	nop    WORD PTR [rax+rax*1+0x0]
+
+314	
+315	                ENTRY(MP_BC_LOAD_CONST_TRUE):
+316	                    PUSH(mp_const_true);
+317	                    DISPATCH();
